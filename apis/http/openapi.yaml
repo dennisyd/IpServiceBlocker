@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: IPBlockerService - OpenAPI 3.0
+  description: |-
+
+  contact:
+    email: charlie@ravenswordproductions.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+# servers:
+#   - url: todo
+paths:
+  /healthcheck:
+    get:
+      summary: Retrieve current health of the service
+      description: Check the health of the IPBlockerService including underlying database accessability
+      operationId: HealthCheck
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serviceOnline:
+                    type: boolean
+                    example: true
+                  databaseAccessable:
+                    type: boolean
+                    example: true          
+  /verifyip:
+    post:
+      summary: Verify that the given IP is within the list of valid countries
+      description: Searches the GeoLite2 database to determine if the given IP address is within the list of valid countries
+      operationId: VerifyIP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ipAddress:
+                  type: string
+                  example: '1.1.1.1'
+                validCountries:
+                  type: array
+                  items:
+                    type: string
+                    example: ['TODO']
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authorized:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid IP provided
+        '404':
+          description: IP address could not be found in any country

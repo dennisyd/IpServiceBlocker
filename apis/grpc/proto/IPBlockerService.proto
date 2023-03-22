@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package = "IPBlockerService/proto";
+
+package proto;
+
+service IPBlockerService {
+    rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {}
+    rpc AuthorizeIP (VerifyIPRequest) returns (VerifyIPResponse) {}
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+    // Signifies the status of the service
+    // 1 == healthy
+    // 0 == unhealthy
+    // -1 == error state
+    // TODO
+    int32 Status = 1;
+}
+
+message VerifyIPRequest {
+    string IPAddress = 1; // required
+    repeated string ValidCountries = 2; // required
+}
+
+message VerifyIPResponse {
+    // Signifies whether the IP is within an authorized country
+    // 1 == authorized
+    // 0 == not authorized
+    // -1 == IP is unrecognized and invalid 
+    int32 Authorized = 1;
+
+    
+    string errorCode = 2;
+    string errorMessage = 3;
+}
