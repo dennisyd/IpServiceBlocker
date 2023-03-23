@@ -44,3 +44,5 @@ Additional improvements:
   - This isn't really necessary unless there's need of using other databases and/or using a GeoLite2 webservice but it could provide some flexibility.
 - Security.
   - Both the HTTP and gRPC APIs are currently insecure. There's plenty of work to be done in this area, from TLS support on the HTTP API to credential management on the gRPC API.
+- Automated Version tagging.
+  - Updating any part of this service implies manually updating the various files that house version details. One great option would be to use [semantic-release](https://github.com/semantic-release/semantic-release) and building it into a pipeline.
