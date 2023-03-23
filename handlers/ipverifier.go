@@ -10,7 +10,7 @@ import (
 	data "IPBlockerService/data"
 )
 
-func ValidateIPAddress(ctx context.Context, ipAddress net.IP, validCountries []string) (bool, error) {
+func AuthorizeIPAddress(ctx context.Context, ipAddress net.IP, validCountries []string) (bool, error) {
 	var originatingCountry string
 	var err error
 

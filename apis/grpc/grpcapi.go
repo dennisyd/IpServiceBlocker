@@ -52,14 +52,14 @@ func (s *IPBlockerServiceServer) AuthorizeIP(ctx context.Context, in *proto.Auth
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	isValid, err := handlers.ValidateIPAddress(ctx, ip, in.ValidCountries)
+	authorized, err := handlers.AuthorizeIPAddress(ctx, ip, in.ValidCountries)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Internal Server Error")
 	}
 
 	res := proto.AuthroizeIPResponse{
-		Authorized: isValid,
+		Authorized: authorized,
 	}
 	base.LogResponse(ctx, &res)
 

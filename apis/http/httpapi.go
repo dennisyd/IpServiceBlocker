@@ -64,7 +64,7 @@ func authorizeIP(ctx *gin.Context) {
 		return
 	}
 
-	isValid, err := handlers.ValidateIPAddress(ctx, ip, newRequest.ValidCountries)
+	authorized, err := handlers.AuthorizeIPAddress(ctx, ip, newRequest.ValidCountries)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Internal Server Error")
@@ -72,7 +72,7 @@ func authorizeIP(ctx *gin.Context) {
 	}
 
 	res := AuthroizeIPResponse{
-		Authorized: isValid,
+		Authorized: authorized,
 	}
 	base.LogResponse(ctx, res)
 

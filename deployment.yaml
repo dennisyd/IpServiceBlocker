@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-ipblockerservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ipblockerservice
+  template:
+    metadata:
+      labels:
+        app: ipblockerservice
+    spec:
+      containers:
+      - name: ipblockerservice-container
+        image: charlesbarkles/ipblockerservice
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        - containerPort: 8080
+          protocol: TCP

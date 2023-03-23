@@ -12,8 +12,6 @@ info:
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
-# servers:
-#   - url: todo
 paths:
   /healthcheck:
     get:
@@ -52,7 +50,7 @@ paths:
                   type: array
                   items:
                     type: string
-                    example: ['TODO']
+                    example: ["United States", "United Kingdom", "Canada",]
       responses:
         '200':
           description: successful operation
