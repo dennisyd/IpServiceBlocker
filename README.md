@@ -22,11 +22,13 @@ API layer (HTTP and gRPC)
     ->  Handler layer
         -> Data layer
 
+# Updating the database
+To perform a database update, you will need to download the newest version of the GeoLite2 database (instructions found [here](/data/README.md)), then perform a `make docker.push`. This will package the database into the Docker file prior to pushing to Docker Hub. See the [# Considerations for Improvements](#considerations-for-improvements) section for a more ideal solution.
 
 # Considerations for Improvements
 At the moment, this service expects to house the GeoLite2 DB locally, per microservice. This is cumbersone on multiple fronts:
 1. It means that DB updates need to be part of the actual deployment of the service
-2. Each service has a increased memory footprint
+2. Each service has an increased memory footprint
 
 A more ideal solution would be to use a cloud based storage system (e.g. AWS S3 or Google Cloud Storage) to house the actual
 database file and then access said file over the internet. This would at least solve the first issue.
