@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	guuid "github.com/google/uuid"
 )
 
 type HealthCheckRequest struct{}
@@ -17,38 +18,37 @@ type HealthCheckResponse struct {
 	DatabaseAccessable bool `json:"databaseAccessable"`
 }
 
-type VerifyIPRequest struct {
+type AuthroizeIPRequest struct {
 	IPAddress      string   `json:"ipAddress"`
 	ValidCountries []string `json:"validCountries"`
 }
 
-type VerifyIPResponse struct {
+type AuthroizeIPResponse struct {
 	Authorized bool `json:"authorized"`
 }
 
-type HTTPAPI struct {
-	Router *gin.Engine
+func addMsgId(ctx *gin.Context) {
+	ctx.Set(base.CONTEXT_MESSAGE_ID, guuid.New())
 }
 
-func (api *HTTPAPI) Run(address string) {
-	api.Router.Run(address)
-}
-
-func (api *HTTPAPI) healthCheck(ctx *gin.Context) {
+func healthCheck(ctx *gin.Context) {
+	addMsgId(ctx)
 	logWhenFinished, functionName := base.HandleNewMessage(ctx)
 	defer logWhenFinished(ctx, functionName)
 
 	res := HealthCheckResponse{
 		ServiceOnline:      true,
-		DatabaseAccessable: handlers.VerifyDbAvailable(ctx),
+		DatabaseAccessable: handlers.IsDbAvailable(ctx),
 	}
 	base.LogResponse(ctx, res)
 
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (api *HTTPAPI) verifyIP(ctx *gin.Context) {
-	var newRequest VerifyIPRequest
+func authorizeIP(ctx *gin.Context) {
+	addMsgId(ctx)
+	var newRequest AuthroizeIPRequest
+
 	logWhenFinished, functionName := base.HandleNewMessage(ctx)
 	defer logWhenFinished(ctx, functionName)
 
@@ -71,7 +71,7 @@ func (api *HTTPAPI) verifyIP(ctx *gin.Context) {
 		return
 	}
 
-	res := VerifyIPResponse{
+	res := AuthroizeIPResponse{
 		Authorized: isValid,
 	}
 	base.LogResponse(ctx, res)
@@ -79,20 +79,16 @@ func (api *HTTPAPI) verifyIP(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func SetupHTTPAPI() *HTTPAPI {
+func SetupHTTPAPI() *gin.Engine {
 	router := gin.Default()
 
-	api := HTTPAPI{
-		Router: router,
-	}
-
-	api.Router.GET("/healthcheck", api.healthCheck)
-	api.Router.POST("/verifyip", api.verifyIP)
+	router.GET("/healthcheck", healthCheck)
+	router.POST("/authorizeip", authorizeIP)
 
 	config := base.GetConfig()
 	if config.IPBLOCKERSERVICE_ENVIRONMENT == base.PROD_ENVIRONMENT {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	return &api
+	return router
 }

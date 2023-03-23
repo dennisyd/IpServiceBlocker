@@ -6,33 +6,21 @@ package proto;
 
 service IPBlockerService {
     rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {}
-    rpc AuthorizeIP (VerifyIPRequest) returns (VerifyIPResponse) {}
+    rpc AuthorizeIP (AuthroizeIPRequest) returns (AuthroizeIPResponse) {}
 }
 
 message HealthCheckRequest {}
 
 message HealthCheckResponse {
-    // Signifies the status of the service
-    // 1 == healthy
-    // 0 == unhealthy
-    // -1 == error state
-    // TODO
-    int32 Status = 1;
+    bool ServiceOnline = 1;
+	bool DatabaseAccessable = 2;
 }
 
-message VerifyIPRequest {
+message AuthroizeIPRequest {
     string IPAddress = 1; // required
     repeated string ValidCountries = 2; // required
 }
 
-message VerifyIPResponse {
-    // Signifies whether the IP is within an authorized country
-    // 1 == authorized
-    // 0 == not authorized
-    // -1 == IP is unrecognized and invalid 
-    int32 Authorized = 1;
-
-    
-    string errorCode = 2;
-    string errorMessage = 3;
+message AuthroizeIPResponse {
+    bool Authorized = 1;
 }

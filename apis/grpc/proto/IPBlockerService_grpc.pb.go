@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IPBlockerServiceClient interface {
 	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
-	AuthorizeIP(ctx context.Context, in *VerifyIPRequest, opts ...grpc.CallOption) (*VerifyIPResponse, error)
+	AuthorizeIP(ctx context.Context, in *AuthroizeIPRequest, opts ...grpc.CallOption) (*AuthroizeIPResponse, error)
 }
 
 type iPBlockerServiceClient struct {
@@ -43,8 +43,8 @@ func (c *iPBlockerServiceClient) HealthCheck(ctx context.Context, in *HealthChec
 	return out, nil
 }
 
-func (c *iPBlockerServiceClient) AuthorizeIP(ctx context.Context, in *VerifyIPRequest, opts ...grpc.CallOption) (*VerifyIPResponse, error) {
-	out := new(VerifyIPResponse)
+func (c *iPBlockerServiceClient) AuthorizeIP(ctx context.Context, in *AuthroizeIPRequest, opts ...grpc.CallOption) (*AuthroizeIPResponse, error) {
+	out := new(AuthroizeIPResponse)
 	err := c.cc.Invoke(ctx, "/proto.IPBlockerService/AuthorizeIP", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (c *iPBlockerServiceClient) AuthorizeIP(ctx context.Context, in *VerifyIPRe
 // for forward compatibility
 type IPBlockerServiceServer interface {
 	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
-	AuthorizeIP(context.Context, *VerifyIPRequest) (*VerifyIPResponse, error)
+	AuthorizeIP(context.Context, *AuthroizeIPRequest) (*AuthroizeIPResponse, error)
 	mustEmbedUnimplementedIPBlockerServiceServer()
 }
 
@@ -68,7 +68,7 @@ type UnimplementedIPBlockerServiceServer struct {
 func (UnimplementedIPBlockerServiceServer) HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
 }
-func (UnimplementedIPBlockerServiceServer) AuthorizeIP(context.Context, *VerifyIPRequest) (*VerifyIPResponse, error) {
+func (UnimplementedIPBlockerServiceServer) AuthorizeIP(context.Context, *AuthroizeIPRequest) (*AuthroizeIPResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthorizeIP not implemented")
 }
 func (UnimplementedIPBlockerServiceServer) mustEmbedUnimplementedIPBlockerServiceServer() {}
@@ -103,7 +103,7 @@ func _IPBlockerService_HealthCheck_Handler(srv interface{}, ctx context.Context,
 }
 
 func _IPBlockerService_AuthorizeIP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyIPRequest)
+	in := new(AuthroizeIPRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func _IPBlockerService_AuthorizeIP_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/proto.IPBlockerService/AuthorizeIP",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IPBlockerServiceServer).AuthorizeIP(ctx, req.(*VerifyIPRequest))
+		return srv.(IPBlockerServiceServer).AuthorizeIP(ctx, req.(*AuthroizeIPRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -1,6 +1,7 @@
 package base
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -8,8 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-	guuid "github.com/google/uuid"
 	zlog "github.com/rs/zerolog/log"
 )
 
@@ -63,23 +62,22 @@ func GetFunctionName() string {
 	return frame.Function
 }
 
-// Helper function to log function name and set a new message ID
-func HandleNewMessage(ctx *gin.Context) (func(*gin.Context, string), string) {
+// Helper function to log function name
+func HandleNewMessage(ctx context.Context) (func(context.Context, string), string) {
 	pc := make([]uintptr, 15)
 	n := runtime.Callers(2, pc)
 	frames := runtime.CallersFrames(pc[:n])
 	frame, _ := frames.Next()
 
-	ctx.Set(CONTEXT_MESSAGE_ID, guuid.New().String())
 	PrintLogLine(ctx, fmt.Sprintf("--> %v", frame.Function))
 	return LogWhenFinished, frame.Function
 }
 
-func LogWhenFinished(ctx *gin.Context, functionName string) {
+func LogWhenFinished(ctx context.Context, functionName string) {
 	PrintLogLine(ctx, fmt.Sprintf("<-- %v", functionName))
 }
 
-func LogResponse(ctx *gin.Context, res any) {
+func LogResponse(ctx context.Context, res any) {
 	PrintLogLine(ctx, fmt.Sprintf("Response %+v", res))
 }
 
@@ -89,10 +87,11 @@ type structuredLog struct {
 }
 
 // Helper function for ensuring log messages follow the same format
-func PrintLogLine(ctx *gin.Context, logMessage string) {
+func PrintLogLine(ctx context.Context, logMessage string) {
 	if ctx != nil {
 		// log.Println(fmt.Sprintf("msgId: %v : %v", messageId, logMessage))
-		zlog.Print(fmt.Sprintf("msgId: %v : %v", ctx.GetString(CONTEXT_MESSAGE_ID), logMessage))
+		val := ctx.Value(CONTEXT_MESSAGE_ID)
+		zlog.Print(fmt.Sprintf("msgId: %v : %v", val, logMessage))
 		return
 	}
 

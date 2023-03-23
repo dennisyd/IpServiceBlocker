@@ -34,11 +34,11 @@ paths:
                   databaseAccessable:
                     type: boolean
                     example: true          
-  /verifyip:
+  /authorizeip:
     post:
-      summary: Verify that the given IP is within the list of valid countries
+      summary: Authroize that the given IP is within the list of valid countries
       description: Searches the GeoLite2 database to determine if the given IP address is within the list of valid countries
-      operationId: VerifyIP
+      operationId: AuthroizeIP
       requestBody:
         content:
           application/json:

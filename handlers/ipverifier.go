@@ -1,17 +1,16 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"strings"
 
 	base "IPBlockerService/base"
 	data "IPBlockerService/data"
-
-	"github.com/gin-gonic/gin"
 )
 
-func ValidateIPAddress(ctx *gin.Context, ipAddress net.IP, validCountries []string) (bool, error) {
+func ValidateIPAddress(ctx context.Context, ipAddress net.IP, validCountries []string) (bool, error) {
 	var originatingCountry string
 	var err error
 
@@ -32,7 +31,7 @@ func ValidateIPAddress(ctx *gin.Context, ipAddress net.IP, validCountries []stri
 	return false, nil
 }
 
-func VerifyDbAvailable(ctx *gin.Context) bool {
-	databaseAccessable, _ := data.VerifyDbAvailable(ctx) // Error logged in data layer
+func IsDbAvailable(ctx context.Context) bool {
+	databaseAccessable, _ := data.IsDbAvailable(ctx) // Error logged in data layer
 	return databaseAccessable
 }

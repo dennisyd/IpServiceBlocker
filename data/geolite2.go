@@ -3,14 +3,14 @@ package data
 import (
 	"IPBlockerService/base"
 	"IPBlockerService/errors"
+	"context"
 	"fmt"
 	"net"
 
-	"github.com/gin-gonic/gin"
 	"github.com/oschwald/geoip2-golang"
 )
 
-func GetOrignatingCountryFromIP(ctx *gin.Context, ipAddress net.IP) (string, error) {
+func GetOrignatingCountryFromIP(ctx context.Context, ipAddress net.IP) (string, error) {
 	if ipAddress == nil {
 		return "", &errors.InvalidIPAddressError{}
 	}
@@ -36,7 +36,7 @@ func GetOrignatingCountryFromIP(ctx *gin.Context, ipAddress net.IP) (string, err
 	return countryRecord.Country.Names["en"], nil
 }
 
-func getDb(ctx *gin.Context) (*geoip2.Reader, error) {
+func getDb(ctx context.Context) (*geoip2.Reader, error) {
 	db, err := geoip2.Open(base.GetConfig().IPBLOCKERSERVICE_GEOLITE2_PATH)
 	if err != nil {
 		base.PrintLogLine(ctx, err.Error())
@@ -45,7 +45,7 @@ func getDb(ctx *gin.Context) (*geoip2.Reader, error) {
 	return db, nil
 }
 
-func VerifyDbAvailable(ctx *gin.Context) (bool, error) {
+func IsDbAvailable(ctx context.Context) (bool, error) {
 	var db *geoip2.Reader
 	var err error
 	if db, err = getDb(ctx); err != nil {
